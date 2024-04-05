@@ -25,17 +25,17 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User update(Long id, User user) {
-        User DBuser = getById(id);
+        User dbUser = getById(id);
         String newUserEmail = user.getEmail();
         String newUserName = user.getName();
         if (newUserEmail != null) {
-            DBuser.setEmail(newUserEmail);
+            dbUser.setEmail(newUserEmail);
         }
         if (newUserName != null) {
-            DBuser.setName(newUserName);
+            dbUser.setName(newUserName);
         }
-        userStorage.put(id, DBuser);
-        return DBuser;
+        userStorage.put(id, dbUser);
+        return dbUser;
     }
 
     @Override
