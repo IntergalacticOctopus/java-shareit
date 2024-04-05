@@ -18,7 +18,6 @@ public class ValidateServiceImpl implements ValidateService {
             throw new ValidationException("Invalid user email");
         }
     }
-
     public void updateValidation(User user) {
         String userEmail = user.getEmail();
         if (userEmail != null) {
@@ -28,7 +27,6 @@ public class ValidateServiceImpl implements ValidateService {
             }
         }
     }
-
     public void validate(ItemDto item) {
         if (item.getName().isBlank()) {
             throw new ValidationException("Invalid item ownerId");
