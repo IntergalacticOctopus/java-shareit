@@ -3,10 +3,8 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.user.model.User;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,10 +15,5 @@ public class ItemDto {
     private Boolean available;
 
     private Boolean isRequested;
-
-    public ItemDto(String name, String description, Boolean available) {
-        this.name = name;
-        this.description = description;
-        this.available = available;
-    }
+    private User owner;
 }

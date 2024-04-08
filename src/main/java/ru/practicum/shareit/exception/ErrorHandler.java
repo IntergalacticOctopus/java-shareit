@@ -20,15 +20,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ValidationException exception) {
-        log.error("Validation error ", exception);
-        String stacktrace = ExceptionUtils.getStackTrace(exception);
-        String errorMessage = "Validation found error: " + exception.getMessage() + stacktrace;
-        return new ErrorResponse(errorMessage);
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleObjectAlreadyExistsException(final ObjectAlreadyExistsException exception) {
         log.error("Server error ", exception);
@@ -38,7 +29,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInternalServiceException(final Exception exception) {
         log.error("Server error ", exception);
         String stacktrace = ExceptionUtils.getStackTrace(exception);

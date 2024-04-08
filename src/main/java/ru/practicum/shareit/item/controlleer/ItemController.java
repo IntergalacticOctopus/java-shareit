@@ -3,15 +3,13 @@ package ru.practicum.shareit.item.controlleer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto item) {
+    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemCreateDto item) {
         log.info("Creating item " + item);
         ItemDto createdItem = itemService.createItem(userId, item);
         log.info("Creating item " + createdItem);
@@ -40,7 +38,8 @@ public class ItemController {
                               @PathVariable Long itemId,
                               @RequestBody ItemDto item) {
         log.info("Updating item " + item + " with id=" + itemId + " by user with id=" + userId);
-        ItemDto updatedItem = itemService.updateItem(userId, itemId, item);
+        item.setId(itemId);
+        ItemDto updatedItem = itemService.updateItem(userId, item);
         log.info("Updated item " + updatedItem + " with id=" + itemId + " by user with id=" + userId);
         return updatedItem;
     }

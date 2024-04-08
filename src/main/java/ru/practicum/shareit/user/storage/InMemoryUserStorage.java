@@ -1,55 +1,83 @@
 package ru.practicum.shareit.user.storage;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exception.ObjectAlreadyExistsException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 import java.util.Map;
 
 @Component
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage {
+    private final UserMapper userMapper;
     private final Map<Long, User> userStorage = new HashMap<>();
     private Long userIdCounter = 0L;
+    private Set<String> emails = new HashSet<>();
 
     @Override
-    public User create(User user) {
+    public UserDto create(User user) {
+        String email = user.getEmail();
+        if (emails.contains(email)) {
+            throw new ObjectAlreadyExistsException("Email is already exist");
+        }
         userIdCounter += 1;
         user.setId(userIdCounter);
         userStorage.put(userIdCounter, user);
-        return user;
+        UserDto newUser = userMapper.toUserDto(user);
+        emails.add(email);
+        return newUser;
     }
 
     @Override
-    public User update(Long id, User user) {
-        User dbUser = getById(id);
-        String newUserEmail = user.getEmail();
-        String newUserName = user.getName();
-        if (newUserEmail != null) {
-            dbUser.setEmail(newUserEmail);
+    public UserDto update(User user) {
+        Long userId = user.getId();
+
+        UserDto oldUser = userMapper.toUserDto(userStorage.get(userId));
+        String oldEmail = oldUser.getEmail();
+
+        UserDto updatedUser = userMapper.toUserDto(user);
+        String newEmail = updatedUser.getEmail();
+        if (!oldEmail.equals(newEmail)) {
+            if (emails.contains(newEmail)) {
+                throw new ObjectAlreadyExistsException("This email is already exist");
+            }
+            emails.remove(oldEmail);
+            emails.add(newEmail);
         }
-        if (newUserName != null) {
-            dbUser.setName(newUserName);
+        userStorage.put(userId, user);
+        return updatedUser;
+    }
+
+    @Override
+    public UserDto getById(Long id) {
+        return userMapper.toUserDto(userStorage.get(id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        User user = userStorage.remove(id);
+        emails.remove(user.getEmail());
+    }
+
+    @Override
+    public List<UserDto> getUsers() {
+        List<UserDto> list = new ArrayList<>();
+        for (User user : userStorage.values()) {
+            list.add(userMapper.toUserDto(user));
         }
-        userStorage.put(id, dbUser);
-        return dbUser;
+        return list;
     }
 
-    @Override
-    public User getById(Long id) {
-        return userStorage.get(id);
-    }
-
-    @Override
-    public User deleteById(Long id) {
-        return userStorage.remove(id);
-    }
-
-    @Override
-    public List<User> getUsers() {
-        return new ArrayList<>(userStorage.values());
+    public Set<Long> getUsersId() {
+        Set<Long> set = userStorage.keySet();
+        if (set != null) {
+            return set;
+        } else {
+            return new HashSet<>();
+        }
     }
 }

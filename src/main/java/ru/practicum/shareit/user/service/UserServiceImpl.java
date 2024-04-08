@@ -2,72 +2,68 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.Validation.ValidateService;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ObjectAlreadyExistsException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
-    private final ValidateService validateService;
+    private final UserMapper userMapper;
 
     @Override
-    public User create(User user) {
-        String email = user.getEmail();
-        if (email == null) {
-            throw new ValidationException("There is no email");
-        }
-        if (getAllEmail().contains(email)) {
-            throw new ObjectAlreadyExistsException("Email is already exist");
-        }
-        validateService.validate(user);
-        return userStorage.create(user);
+    public UserDto create(UserCreateDto user) {
+        User newUser = userMapper.toUser(user);
+        return userStorage.create(newUser);
     }
 
     @Override
-    public User update(Long id, User user) {
-        getUserById(id);
-        validateService.updateValidation(user);
-        String email = user.getEmail();
-        if (email != null && getUserById(id).getEmail().equals(email)) {
-            return userStorage.update(id, user);
+    public UserDto update(UserUpdateDto user) {
+        Long userId = user.getId();
+        User updataUser = getById(userId);
+
+        String newUserEmail = user.getEmail();
+        String newUserName = user.getName();
+        if (newUserEmail != null) {
+            updataUser.setEmail(newUserEmail);
         }
-        if (getAllEmail().contains(user.getEmail())) {
-            throw new ObjectAlreadyExistsException("Email is already exist");
+        if (newUserName != null) {
+            updataUser.setName(newUserName);
         }
-        return userStorage.update(id, user);
+        return userStorage.update(updataUser);
+    }
+
+    private User getById(Long id) {
+        UserDto user = getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("User does not exist");
+        }
+        return userMapper.toUser(user);
     }
 
     @Override
-    public User getUserById(Long id) {
-        if (id == null || userStorage.getById(id) == null) {
+    public UserDto getUserById(Long id) {
+
+        if (id == null || !userStorage.getUsersId().contains(id)) {
             throw new NotFoundException("User does not exist");
         }
         return userStorage.getById(id);
     }
 
     @Override
-    public User deleteById(Long id) {
-        return userStorage.deleteById(id);
+    public void deleteById(Long id) {
+        userStorage.deleteById(id);
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         return userStorage.getUsers();
-    }
-
-    private List<String> getAllEmail() {
-        List<String> list = new ArrayList<>();
-        for (User user : getUsers()) {
-            list.add(user.getEmail());
-        }
-        return list;
     }
 }
