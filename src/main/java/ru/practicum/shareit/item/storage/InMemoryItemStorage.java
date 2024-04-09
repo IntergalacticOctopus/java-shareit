@@ -2,8 +2,6 @@ package ru.practicum.shareit.item.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
@@ -14,13 +12,12 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class InMemoryItemStorage implements ItemStorage {
-    private final ItemMapper itemMapper;
     private final Map<Long, Item> items = new HashMap<>();
     private final Map<Long, ArrayList<Long>> usersItems = new HashMap<>();
     private Long itemIdCounter = 0L;
 
     @Override
-    public ItemDto createItem(Item item) {
+    public Item create(Item item) {
         itemIdCounter += 1;
         item.setId(itemIdCounter);
         items.put(itemIdCounter, item);
@@ -33,35 +30,23 @@ public class InMemoryItemStorage implements ItemStorage {
         list.add(item.getId());
         usersItems.put(userId, list);
 
-        return itemMapper.toItemDto(item);
-    }
-
-
-    @Override
-    public boolean isUsersItem(Item item) {
-        List<Long> list = usersItems.get(item.getOwner().getId());
-        if (list != null) {
-            if (list.contains(item.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return item;
     }
 
     @Override
-    public ItemDto updateItem(Item item) {
+    public Item update(Item item) {
         items.put(item.getId(), item);
-        return itemMapper.toItemDto(item);
+        return item;
     }
 
     @Override
-    public ItemDto getItemById(Long id) {
-        return itemMapper.toItemDto(items.get(id));
+    public Item get(Long id) {
+        return items.get(id);
     }
 
     @Override
-    public void deleteItemById(Long id) {
-        Long userId = getItemById(id).getOwner().getId();
+    public void delete(Long id) {
+        Long userId = get(id).getOwner().getId();
         ArrayList list = usersItems.get(userId);
 
         list.remove(list.indexOf(id));
@@ -71,12 +56,12 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public List<ItemDto> getItemsByUserId(Long id) {
+    public List<Item> getItemsByUserId(Long id) {
         ArrayList<Long> idList = usersItems.get(id);
-        ArrayList<ItemDto> list = new ArrayList<>();
+        ArrayList<Item> list = new ArrayList<>();
         if (idList != null) {
             for (Long itemId : idList) {
-                list.add(getItemById(itemId));
+                list.add(get(itemId));
             }
             return list;
         } else {
@@ -85,14 +70,14 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public List<ItemDto> search(String text) {
-        List<ItemDto> list = new ArrayList<>();
+    public List<Item> search(String text) {
+        List<Item> list = new ArrayList<>();
         if (!text.isBlank()) {
             for (Item item : items.values()) {
                 if (item.getName().toLowerCase().contains(text.toLowerCase())
                         || item.getDescription().toLowerCase().contains(text.toLowerCase())) {
                     if (item.getAvailable().equals(true)) {
-                        list.add(itemMapper.toItemDto(item));
+                        list.add(item);
                     }
                 }
             }

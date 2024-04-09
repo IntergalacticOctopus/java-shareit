@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
@@ -18,36 +19,36 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable Long itemId) {
+    public ItemDto get(@PathVariable Long itemId) {
         log.info("Getting item by id " + itemId);
-        ItemDto item = itemService.getItemById(itemId);
+        ItemDto item = itemService.get(itemId);
         log.info("Got item " + item);
         return item;
     }
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemCreateDto item) {
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemCreateDto item) {
         log.info("Creating item " + item);
-        ItemDto createdItem = itemService.createItem(userId, item);
+        ItemDto createdItem = itemService.create(userId, item);
         log.info("Creating item " + createdItem);
         return createdItem;
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @PathVariable Long itemId,
-                              @RequestBody ItemDto item) {
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId,
+                          @PathVariable Long itemId,
+                          @RequestBody ItemUpdateDto item) {
         log.info("Updating item " + item + " with id=" + itemId + " by user with id=" + userId);
         item.setId(itemId);
-        ItemDto updatedItem = itemService.updateItem(userId, item);
+        ItemDto updatedItem = itemService.update(userId, item);
         log.info("Updated item " + updatedItem + " with id=" + itemId + " by user with id=" + userId);
         return updatedItem;
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+    public void delete(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
         log.info("Deleting item by id " + itemId + " with ownerId=" + userId);
-        itemService.deleteItemById(userId, itemId);
+        itemService.delete(userId, itemId);
         log.info("Deleted item by id " + itemId + " with ownerId=" + userId);
 
     }

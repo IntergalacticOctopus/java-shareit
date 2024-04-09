@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
@@ -20,14 +19,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserCreateDto user) {
-        User newUser = userMapper.toUser(user);
-        return userStorage.create(newUser);
+        return userMapper.toUserDto(userStorage.create(userMapper.toUser(user)));
     }
 
     @Override
     public UserDto update(UserUpdateDto user) {
         Long userId = user.getId();
-        User updataUser = getById(userId);
+        User updataUser = userMapper.toUser(getUserById(userId));
 
         String newUserEmail = user.getEmail();
         String newUserName = user.getName();
@@ -37,33 +35,22 @@ public class UserServiceImpl implements UserService {
         if (newUserName != null) {
             updataUser.setName(newUserName);
         }
-        return userStorage.update(updataUser);
-    }
-
-    private User getById(Long id) {
-        UserDto user = getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("User does not exist");
-        }
-        return userMapper.toUser(user);
+        return userMapper.toUserDto(userStorage.update(updataUser));
     }
 
     @Override
     public UserDto getUserById(Long id) {
-
-        if (id == null || !userStorage.getUsersId().contains(id)) {
-            throw new NotFoundException("User does not exist");
-        }
-        return userStorage.getById(id);
+        userStorage.get(id);
+        return userMapper.toUserDto(userStorage.get(id));
     }
 
     @Override
     public void deleteById(Long id) {
-        userStorage.deleteById(id);
+        userStorage.delete(id);
     }
 
     @Override
     public List<UserDto> getUsers() {
-        return userStorage.getUsers();
+        return userMapper.toUserDtoList(userStorage.getUsers());
     }
 }

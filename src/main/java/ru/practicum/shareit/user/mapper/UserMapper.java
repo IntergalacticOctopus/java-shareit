@@ -6,6 +6,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.List;
+
 @Component
 public interface UserMapper {
     public User toUser(UserCreateDto user);
@@ -16,4 +18,5 @@ public interface UserMapper {
 
     public UserDto toUserDto(User user);
 
+    public List<UserDto> toUserDtoList(List<User> userList);
 }

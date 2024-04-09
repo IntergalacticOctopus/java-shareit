@@ -5,44 +5,42 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final UserService userService;
+    private final UserStorage userStorage;
     private final ItemStorage itemStorage;
     private final UserMapper userMapper;
     private final ItemMapper itemMapper;
 
     @Override
-    public ItemDto createItem(long userId, ItemCreateDto item) {
-        UserDto userDto = userService.getUserById(userId);
-        if (userDto == null) {
+    public ItemDto create(long userId, ItemCreateDto item) {
+        User user = userStorage.get(userId);
+        if (user == null) {
             throw new NotFoundException("User does not exist");
         }
-        User user = userMapper.toUser(userDto);
-        item.setOwner(user);
-        return itemStorage.createItem(itemMapper.toItem(item));
+        Item newItem = itemMapper.toItem(item, user);
+        return itemMapper.toItemDto(itemStorage.create(newItem));
     }
 
     @Override
-    public ItemDto updateItem(long userId, ItemDto item) {
-        UserDto userDto = userService.getUserById(userId);
+    public ItemDto update(long userId, ItemUpdateDto item) {
+        User user = userStorage.get(userId);
         Long updatableItemId = item.getId();
-        ItemDto updatableItem = getItemById(updatableItemId);
+        ItemDto updatableItem = get(updatableItemId);
         Boolean available = item.getAvailable();
         String name = item.getName();
         String description = item.getDescription();
-        Boolean isRequested = item.getIsRequested();
         if (available != null) {
             updatableItem.setAvailable(available);
         }
@@ -52,43 +50,39 @@ public class ItemServiceImpl implements ItemService {
         if (description != null) {
             updatableItem.setDescription(description);
         }
-        if (isRequested != null) {
-            updatableItem.setIsRequested(isRequested);
-        }
-        updatableItem.setOwner(userMapper.toUser(userDto));
         updatableItem.setId(updatableItemId);
-        Item item1 = itemMapper.toItem(updatableItem);
-        if (itemStorage.isUsersItem(item1)) {
-            return itemStorage.updateItem(item1);
+        Item item1 = itemMapper.toItem(updatableItem, user);
+        if (itemStorage.getItemsByUserId(userId).contains(itemStorage.get(item.getId()))) {
+            return itemMapper.toItemDto(itemStorage.update(item1));
         } else {
             throw new NotFoundException("Пользователь не является владельцем товара");
         }
     }
 
     @Override
-    public ItemDto getItemById(long id) {
-        ItemDto item = itemStorage.getItemById(id);
+    public ItemDto get(long id) {
+        Item item = itemStorage.get(id);
         if (item == null) {
             throw new NotFoundException("Item not found");
         }
-        return item;
+        return itemMapper.toItemDto(item);
     }
 
     @Override
-    public void deleteItemById(long userId, long id) {
-        itemStorage.deleteItemById(id);
+    public void delete(long userId, long id) {
+        itemStorage.delete(id);
     }
 
     @Override
     public List<ItemDto> getItemsByUserId(long id) {
-        if (userService.getUserById(id) == null) {
+        if (userStorage.get(id) == null) {
             throw new NotFoundException("This user does not exist");
         }
-        return itemStorage.getItemsByUserId(id);
+        return itemMapper.toItemDtoList(itemStorage.getItemsByUserId(id));
     }
 
     @Override
     public List<ItemDto> search(String text) {
-        return itemStorage.search(text);
+        return itemMapper.toItemDtoList(itemStorage.search(text));
     }
 }
