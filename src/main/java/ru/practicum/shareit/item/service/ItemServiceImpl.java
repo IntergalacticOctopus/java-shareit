@@ -36,6 +36,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto update(long userId, ItemUpdateDto item) {
         User user = userStorage.get(userId);
+        if (user == null) {
+            throw new NotFoundException("User does not exist");
+        }
         Long updatableItemId = item.getId();
         ItemDto updatableItem = get(updatableItemId);
         Boolean available = item.getAvailable();

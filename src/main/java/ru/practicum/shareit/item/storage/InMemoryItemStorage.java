@@ -13,7 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InMemoryItemStorage implements ItemStorage {
     private final Map<Long, Item> items = new HashMap<>();
-    private final Map<Long, ArrayList<Long>> usersItems = new HashMap<>();
+    private final Map<Long, List<Long>> usersItems = new HashMap<>();
     private Long itemIdCounter = 0L;
 
     @Override
@@ -23,7 +23,7 @@ public class InMemoryItemStorage implements ItemStorage {
         items.put(itemIdCounter, item);
         Long userId = item.getOwner().getId();
 
-        ArrayList<Long> list = usersItems.get(userId);
+        List<Long> list = usersItems.get(userId);
         if (list == null) {
             list = new ArrayList<>();
         }
@@ -47,7 +47,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public void delete(Long id) {
         Long userId = get(id).getOwner().getId();
-        ArrayList list = usersItems.get(userId);
+        List list = usersItems.get(userId);
 
         list.remove(list.indexOf(id));
 
@@ -57,7 +57,7 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public List<Item> getItemsByUserId(Long id) {
-        ArrayList<Long> idList = usersItems.get(id);
+        List<Long> idList = usersItems.get(id);
         ArrayList<Item> list = new ArrayList<>();
         if (idList != null) {
             for (Long itemId : idList) {

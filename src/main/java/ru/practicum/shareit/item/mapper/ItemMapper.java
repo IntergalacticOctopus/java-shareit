@@ -11,7 +11,6 @@ import java.util.List;
 
 @Component
 public interface ItemMapper {
-    public Item toItem(ItemCreateDto item);
 
     public Item toItem(ItemUpdateDto item, User owner);
 

@@ -12,10 +12,6 @@ import java.util.List;
 
 @Component
 public class ItemMapperImpl implements ItemMapper {
-    @Override
-    public Item toItem(ItemCreateDto item) {
-        return new Item(item.getId(), item.getName(), item.getDescription(), item.getAvailable(), item.getOwner());
-    }
 
     @Override
     public Item toItem(ItemUpdateDto item, User owner) {
