@@ -10,13 +10,15 @@ import java.util.List;
 
 @Component
 public interface UserMapper {
-    public User toUser(UserCreateDto user);
+    User toUser(UserCreateDto user);
 
-    public User toUser(UserUpdateDto user);
+    User toUser(UserUpdateDto user);
 
-    public User toUser(UserDto user);
+    User toUser(UserDto user);
 
-    public UserDto toUserDto(User user);
+    UserDto toUserDto(UserUpdateDto user);
 
-    public List<UserDto> toUserDtoList(List<User> userList);
+    UserDto toUserDto(User user);
+
+    List<UserDto> toUserDtoList(List<User> userList);
 }

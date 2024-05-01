@@ -16,6 +16,11 @@ public class UserMapperImpl implements UserMapper {
         return new UserDto(user.getId(), user.getName(), user.getEmail());
     }
 
+    @Override
+    public UserDto toUserDto(UserUpdateDto user) {
+        return new UserDto(user.getId(), user.getName(), user.getEmail());
+    }
+
 
     @Override
     public User toUser(UserCreateDto user) {
