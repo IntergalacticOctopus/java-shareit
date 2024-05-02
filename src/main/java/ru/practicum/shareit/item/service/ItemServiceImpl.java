@@ -179,7 +179,7 @@ public class ItemServiceImpl implements ItemService {
         Comment newComment = commentMapper.toComment(comment);
         newComment.setItem(item);
         newComment.setAuthor(user);
-        newComment.setCreatedDate(LocalDateTime.now());
+        newComment.setCreated(LocalDateTime.now());
         commentRepository.save(newComment);
         return commentMapper.toCommentDto(newComment);
     }

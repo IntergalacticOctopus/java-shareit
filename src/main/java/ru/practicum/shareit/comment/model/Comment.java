@@ -28,11 +28,12 @@ public class Comment {
     @JoinColumn(name = "author_id")
     private User author;
 
-    private LocalDateTime createdDate;
+    @Column(name = "created_date")
+    private LocalDateTime created;
 
     public Comment(Long id, String text, LocalDateTime created) {
         this.id = id;
         this.text = text;
-        this.createdDate = created;
+        this.created = created;
     }
 }

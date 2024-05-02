@@ -17,13 +17,13 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column
     private String name;
 
-    @Column(name = "description")
+    @Column
     private String description;
 
-    @Column(name = "available")
+    @Column
     private Boolean available;
 
     @ManyToOne

@@ -9,7 +9,7 @@ import ru.practicum.shareit.comment.model.Comment;
 public class CommentMapper {
 
     public CommentDto toCommentDto(Comment comment) {
-        CommentDto commentDto = new CommentDto(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreatedDate());
+        CommentDto commentDto = new CommentDto(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
         return commentDto;
     }
 
