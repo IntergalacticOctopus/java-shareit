@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "bookings")
 public class Booking {
     @Id
@@ -39,4 +40,5 @@ public class Booking {
         this.start = start;
         this.end = end;
     }
+
 }

@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @AllArgsConstructor
-@Component
+@Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
 
@@ -35,6 +35,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     private final BookingMapper mapper;
+    private static final Sort SORT = Sort.by(DESC, "start");
 
     @Override
     @Transactional
@@ -92,12 +93,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByOwner(Long userId, String state) {
+    public List<BookingDto> getBookingsByOwner(Long userId, State state) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
-        State state1 = stateToEnum(state);
         List<Booking> bookingList;
-        switch (state1) {
+        switch (state) {
             case ALL:
                 bookingList = bookingRepository.findAllByItemOwner(user, Sort.by(DESC, "start"));
                 break;
@@ -125,30 +125,29 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByUser(Long userId, String state) {
+    public List<BookingDto> getBookingsByUser(Long userId, State state) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         List<Booking> bookingList;
-        State state1 = stateToEnum(state);
-        switch (state1) {
+        switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByBooker(user, Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByBooker(user, SORT);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), SORT);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.WAITING, Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.WAITING, SORT);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.REJECTED, Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.REJECTED, SORT);
                 break;
             case PAST:
-                bookingList = bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), SORT);
                 break;
             case CURRENT:
                 bookingList = bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
-                        LocalDateTime.now(), Sort.by(DESC, "start"));
+                        LocalDateTime.now(), SORT);
                 break;
             default:
                 return Collections.emptyList();
@@ -158,12 +157,5 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    private State stateToEnum(String state) {
-        for (State s : State.values()) {
-            if (s.name().equalsIgnoreCase(state)) {
-                return s;
-            }
-        }
-        throw new IllegalArgumentException("Unknown state: " + state);
-    }
+
 }

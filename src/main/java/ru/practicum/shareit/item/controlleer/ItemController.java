@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentCreateDto;
 import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
@@ -22,10 +23,12 @@ public class ItemController {
 
 
     private final ItemService itemService;
+    private static final String REQUEST_HEADER = "X-Sharer-User-Id";
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemCreateDto item) {
+    public ItemDto addItem(@RequestHeader(REQUEST_HEADER) long userId, @Valid @RequestBody ItemCreateDto item) {
         log.info("Adding item by user" + userId);
         ItemDto addedItemDto = itemService.create(userId, item);
         log.info("Item added by user" + userId);
@@ -33,18 +36,21 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @PathVariable Long itemId,
+    public ItemDto updateItem(@RequestHeader(REQUEST_HEADER) long userId,
+                              @PathVariable long itemId,
                               @RequestBody ItemUpdateDto item) {
         log.info("Updating item" + itemId);
         item.setId(itemId);
+        if (item.getId() == null) {
+            throw new NotFoundException("Item does not exist");
+        }
         ItemDto updatedItemDto = itemService.update(userId, item);
         log.info("Item updated " + updatedItemDto.getId());
         return updatedItemDto;
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+    public ItemDto getById(@RequestHeader(REQUEST_HEADER) long userId, @PathVariable long itemId) {
         log.info("Getting item " + itemId);
         ItemDto itemDto = itemService.getById(userId, itemId);
         log.info("Got item " + itemDto.getId());
@@ -53,14 +59,14 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+    public void removeById(@RequestHeader(REQUEST_HEADER) long userId, @PathVariable long itemId) {
         log.info("Deleting item " + itemId);
         itemService.delete(userId, itemId);
         log.info("Deleted item " + itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getUsersItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getUsersItems(@RequestHeader(REQUEST_HEADER) long userId) {
         log.info("Getting items by user " + userId);
         List<ItemDto> itemDtos = itemService.getItemsByUserId(userId);
         log.info("Getting items " + itemDtos);
@@ -76,9 +82,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public CommentDto addComment(@RequestHeader(REQUEST_HEADER) long userId,
                                  @Valid @RequestBody CommentCreateDto comment,
-                                 @PathVariable Long itemId) {
+                                 @PathVariable long itemId) {
         log.info("Adding comment by user " + userId);
         CommentDto commentDto = itemService.addComment(itemId, userId, comment);
         log.info("Added comment by user " + userId);

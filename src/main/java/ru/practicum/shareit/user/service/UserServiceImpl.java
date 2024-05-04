@@ -12,9 +12,8 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,17 +31,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(UserUpdateDto userUpdateDto) {
-        Optional<User> userOptional = userRepository.findById(userUpdateDto.getId());
-        userOptional.ifPresentOrElse(
-                user -> {
+        return userRepository.findById(userUpdateDto.getId())
+                .map(user -> {
                     updateUserData(user, userUpdateDto);
                     userRepository.save(user);
-                },
-                () -> {
-                    throw new NotFoundException("User not found");
-                }
-        );
-        return userMapper.toUserDto(userOptional.orElseThrow(() -> new NotFoundException("User not found")));
+                    return userMapper.toUserDto(user);
+                })
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     private void updateUserData(User user, UserUpdateDto userUpdateDto) {
@@ -63,11 +58,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getUsers() {
-        List<User> list = new ArrayList<>(userRepository.findAll());
-        List<UserDto> userDtoList = new ArrayList<>();
-        for (User user : list) {
-            userDtoList.add(userMapper.toUserDto(user));
-        }
+        List<UserDto> userDtoList = userRepository.findAll().stream()
+                .map(userMapper::toUserDto)
+                .collect(Collectors.toList());
         return userDtoList;
     }
 }
