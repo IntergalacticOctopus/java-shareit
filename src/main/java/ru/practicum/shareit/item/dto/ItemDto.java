@@ -16,9 +16,7 @@ public class ItemDto {
     private String description;
     private Boolean available;
     private BookingDto lastBooking;
-
     private BookingDto nextBooking;
-
     private List<CommentDto> comments;
 
     public ItemDto(Long id, String name, String description, Boolean available) {

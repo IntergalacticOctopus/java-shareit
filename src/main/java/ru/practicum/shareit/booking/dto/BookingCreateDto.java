@@ -33,7 +33,7 @@ public class BookingCreateDto {
     @AssertTrue
     private boolean isTimeValid() throws ValidationException {
         if (start == null || end == null) {
-            throw new ValidationException("Incorrect time (null)");
+            return false;
         }
         boolean returnSt = (!(start.equals(end) || end.isBefore(start)));
         return returnSt;
