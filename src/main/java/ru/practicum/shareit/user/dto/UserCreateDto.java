@@ -14,7 +14,6 @@ public class UserCreateDto {
 
     private Long id;
 
-    @NotNull
     @NotBlank
     private String name;
 

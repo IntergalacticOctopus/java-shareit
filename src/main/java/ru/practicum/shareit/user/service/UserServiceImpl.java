@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreateDto;
@@ -16,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -24,12 +24,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public UserDto create(UserCreateDto user) {
         User returnUser = userRepository.save(userMapper.toUser(user));
         return userMapper.toUserDto(returnUser);
     }
 
     @Override
+    @Transactional
     public UserDto update(UserUpdateDto userUpdateDto) {
         return userRepository.findById(userUpdateDto.getId())
                 .map(user -> {
@@ -46,17 +48,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @ReadOnlyProperty
     public UserDto getUserById(Long id) {
         UserDto user = userMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found")));
         return user;
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
+    @ReadOnlyProperty
     public List<UserDto> getUsers() {
         List<UserDto> userDtoList = userRepository.findAll().stream()
                 .map(userMapper::toUserDto)

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
@@ -33,7 +34,6 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
@@ -44,6 +44,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingMapper bookingMapper;
 
     @Override
+    @Transactional
     public ItemDto create(Long userId, ItemCreateDto item) {
         if (userId == null) {
             throw new NotFoundException("User does not exist");
@@ -55,6 +56,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto update(long userId, ItemUpdateDto item) {
 
         Item updatebleItem = itemRepository.findById(item.getId())
@@ -71,6 +73,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @ReadOnlyProperty
     public ItemDto getById(Long userId, Long id) {
         Item neededItem = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item does not exist"));
@@ -101,11 +104,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void delete(long userId, long id) {
         itemRepository.deleteById(id);
     }
 
     @Override
+    @ReadOnlyProperty
     public List<ItemDto> getItemsByUserId(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User does not exist"));
@@ -154,6 +159,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @ReadOnlyProperty
     public List<ItemDto> search(String text) {
         if (text.isBlank()) {
             return new ArrayList<>();
@@ -169,6 +175,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto addComment(Long itemId, Long userId, CommentCreateDto comment) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User does not exist"));
