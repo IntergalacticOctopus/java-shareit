@@ -139,19 +139,22 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), Collections.emptyList());
         Booking lastBooking = null;
         Booking nextBooking = null;
+
+        for (Booking booking : itemBookings) {
+            if (booking.getEnd().isBefore(LocalDateTime.now()) || booking.getEnd().isEqual(LocalDateTime.now())) {
+                lastBooking = booking;
+            }
+        }
         for (Booking booking : itemBookings) {
             if (booking.getStart().isAfter(LocalDateTime.now())) {
                 nextBooking = booking;
-            } else if (booking.getStart().isBefore(LocalDateTime.now()) || booking.getStart().isEqual(LocalDateTime.now()) || booking.getEnd().isAfter(LocalDateTime.now())) {
-                lastBooking = booking;
-                ;
             }
         }
         ItemDto itemDto = itemMapper.toItemDto(item);
-        if (lastBooking != null) {
+        if (lastBooking!= null) {
             itemDto.setLastBooking(bookingMapper.toBookingForItemDto(lastBooking));
         }
-        if (nextBooking != null) {
+        if (nextBooking!= null) {
             itemDto.setNextBooking(bookingMapper.toBookingForItemDto(nextBooking));
         }
         itemDto.setComments(commentsByItemId.getOrDefault(item.getId(), Collections.emptyList()));
