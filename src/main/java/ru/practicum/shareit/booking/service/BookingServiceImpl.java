@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
@@ -80,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public BookingDto getById(Long bookingId, Long userId) {
         try {
             Booking booking = bookingRepository.findById(bookingId)
@@ -95,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public List<BookingDto> getBookingsByOwner(Long userId, State state) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
@@ -128,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public List<BookingDto> getBookingsByUser(Long userId, State state) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));

@@ -23,8 +23,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public ItemDto getById(Long userId, Long id) {
         Item neededItem = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item does not exist"));
@@ -111,6 +111,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public List<ItemDto> getItemsByUserId(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User does not exist"));
@@ -137,19 +138,25 @@ public class ItemServiceImpl implements ItemService {
 
     private ItemDto processItem(Item item, Map<Long, List<Booking>> bookingsByItemId, Map<Long, List<CommentDto>> commentsByItemId) {
         List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), Collections.emptyList());
-        Booking lastBooking = null;
-        Booking nextBooking = null;
 
-        for (Booking booking : itemBookings) {
-            if (booking.getEnd().isBefore(LocalDateTime.now()) || booking.getEnd().isEqual(LocalDateTime.now())) {
-                lastBooking = booking;
-            }
-        }
+        Booking nextBooking = null;
         for (Booking booking : itemBookings) {
             if (booking.getStart().isAfter(LocalDateTime.now())) {
-                nextBooking = booking;
+                if (nextBooking == null || booking.getStart().isBefore(nextBooking.getStart())) {
+                    nextBooking = booking;
+                }
             }
         }
+
+        Booking lastBooking = null;
+        for (Booking booking : itemBookings) {
+            if (booking.getStart().isBefore(LocalDateTime.now()) || booking.getStart().isEqual(LocalDateTime.now())) {
+                if (lastBooking == null || booking.getStart().isAfter(lastBooking.getStart())) {
+                    lastBooking = booking;
+                }
+            }
+        }
+
         ItemDto itemDto = itemMapper.toItemDto(item);
         if (lastBooking != null) {
             itemDto.setLastBooking(bookingMapper.toBookingForItemDto(lastBooking));
@@ -162,7 +169,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @ReadOnlyProperty
+    @Transactional(readOnly = true)
     public List<ItemDto> search(String text) {
         if (text.isBlank()) {
             return new ArrayList<>();
