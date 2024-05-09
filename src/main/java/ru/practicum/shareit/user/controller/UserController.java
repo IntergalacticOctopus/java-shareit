@@ -19,10 +19,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public UserDto getById(@PathVariable Long id) {
+    public UserDto getById(@PathVariable long id) {
         log.info("Getting user " + id);
         UserDto user = userService.getUserById(id);
-        log.info("Got user " + user);
+        log.info("Got user " + id);
         return user;
     }
 
@@ -30,32 +30,32 @@ public class UserController {
     public UserDto create(@Valid @RequestBody UserCreateDto user) {
         log.info("Creating user " + user);
         UserDto createdUser = userService.create(user);
-        log.info(createdUser + " user was created");
+        log.info("User was created " + user);
         return createdUser;
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable Long id, @Valid @RequestBody UserUpdateDto user) {
-        log.info("updating user " + user + " with id = " + id);
-        user.setId(id);
-        UserDto updatedUser = userService.update(user);
-        log.info(updatedUser + " user " + id + " was updated");
-        return updatedUser;
+    public UserDto updateUser(@PathVariable long id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
+        log.info("Updating user " + userUpdateDto);
+        userUpdateDto.setId(id);
+        UserDto updatedUserDto = userService.update(userUpdateDto);
+        log.info("User updated " + userUpdateDto);
+        return updatedUserDto;
     }
 
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
+    public void deleteById(@PathVariable long id) {
         log.info("Deleting user " + id);
         userService.deleteById(id);
-        log.info("User " + id + " deleted");
+        log.info("User deleted " + id);
     }
 
     @GetMapping
     public List<UserDto> getUsers() {
         log.info("Get all users");
         List<UserDto> list = userService.getUsers();
-        log.info("Get all users " + list);
+        log.info("Got all users " + list);
         return list;
     }
 }
