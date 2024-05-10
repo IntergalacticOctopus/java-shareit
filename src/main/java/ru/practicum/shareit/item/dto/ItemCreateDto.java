@@ -17,11 +17,12 @@ public class ItemCreateDto {
     private String name;
 
     @NotNull
-    @NotBlank
     private String description;
 
     @NotNull
     private Boolean available;
 
     private Long userId;
+
+    private Long requestId;
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
@@ -95,29 +96,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getBookingsByOwner(Long userId, State state) {
+    public List<BookingDto> getBookingsByOwner(Long userId, State state, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByItemOwner(user, Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByItemOwner(user, pageable);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findAllByItemOwnerAndStartAfter(user, LocalDateTime.now(), Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByItemOwnerAndStartAfter(user, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.WAITING, Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.WAITING, pageable);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.REJECTED, Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.REJECTED, pageable);
                 break;
             case PAST:
-                bookingList = bookingRepository.findAllByItemOwnerAndEndBefore(user, LocalDateTime.now(), Sort.by(DESC, "start"));
+                bookingList = bookingRepository.findAllByItemOwnerAndEndBefore(user, LocalDateTime.now(), pageable);
                 break;
             case CURRENT:
                 bookingList = bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
-                        LocalDateTime.now(), Sort.by(DESC, "start"));
+                        LocalDateTime.now(), pageable);
                 break;
             default:
                 bookingList = Collections.emptyList();
@@ -128,29 +129,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getBookingsByUser(Long userId, State state) {
+    public List<BookingDto> getBookingsByUser(Long userId, State state, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         List<Booking> bookingList;
         switch (state) {
             case ALL:
-                bookingList = bookingRepository.findAllByBooker(user, SORT);
+                bookingList = bookingRepository.findAllByBooker(user, pageable);
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), SORT);
+                bookingList = bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
-                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.WAITING, SORT);
+                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.WAITING, pageable);
                 break;
             case REJECTED:
-                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.REJECTED, SORT);
+                bookingList = bookingRepository.findAllByBookerAndStatusEquals(user, Status.REJECTED, pageable);
                 break;
             case PAST:
-                bookingList = bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), SORT);
+                bookingList = bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), pageable);
                 break;
             case CURRENT:
                 bookingList = bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
-                        LocalDateTime.now(), SORT);
+                        LocalDateTime.now(), pageable);
                 break;
             default:
                 return Collections.emptyList();

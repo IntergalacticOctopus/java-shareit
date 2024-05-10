@@ -27,8 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
         ItemDto item = itemDtoList.get(0);
         item.setComments(commentRepository.getAllByItemId(id).stream()
                 .map(commentMapper::toCommentDto)
-                .collect(Collectors.toList()));
+                .collect(toList()));
 
         return item;
     }
@@ -201,5 +201,18 @@ public class ItemServiceImpl implements ItemService {
         newComment.setCreated(LocalDateTime.now());
         commentRepository.save(newComment);
         return commentMapper.toCommentDto(newComment);
+    }
+
+    @Override
+    public List<ItemDto> getItemsByRequestId(Long requestId) {
+        List<ItemDto> itemDtos = new ArrayList<>();
+        List<Item> items = itemRepository.getItemsByRequestId(requestId, Sort.by(DESC, "id"));
+
+        for (Item item : items) {
+            ItemDto itemDto = itemMapper.toItemDto(item);
+            itemDtos.add(itemDto);
+        }
+
+        return itemDtos;
     }
 }

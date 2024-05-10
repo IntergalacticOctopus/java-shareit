@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -9,7 +12,10 @@ import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -18,6 +24,7 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
     private static final String REQUEST_HEADER = "X-Sharer-User-Id";
+    private static final Sort SORT = Sort.by(DESC, "start");
 
     @PostMapping
     public BookingDto create(@RequestHeader(REQUEST_HEADER) long userId,
@@ -49,19 +56,30 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> getBooking(@RequestHeader(REQUEST_HEADER) long userId,
-                                       @RequestParam(defaultValue = "ALL") String state) throws Exception {
+                                       @RequestParam(defaultValue = "ALL") String state,
+                                       @RequestParam(defaultValue = "0") int from,
+                                       @RequestParam(defaultValue = "10") int size) throws Exception {
         log.info("Getting booking by owner " + userId);
-        List<BookingDto> result = bookingService.getBookingsByOwner(userId, State.valueOfEnum(state));
+        Pageable pageable = PageRequest.of(from, size, SORT);
+        List<BookingDto> bookingDtoList = bookingService.getBookingsByOwner(userId,
+                State.valueOfEnum(state), pageable);
         log.info("Got booking by owner " + userId);
-        return result;
+        return bookingDtoList;
     }
 
     @GetMapping
     public List<BookingDto> getBookingsByUser(@RequestHeader(REQUEST_HEADER) long userId,
-                                              @RequestParam(defaultValue = "ALL") String state) throws Exception {
+                                              @RequestParam(defaultValue = "ALL") String state,
+                                              @RequestParam(defaultValue = "0") @Min(0) int from,
+                                              @RequestParam(defaultValue = "10") int size) throws Exception {
         log.info("Getting booking by user " + userId);
-        List<BookingDto> result = bookingService.getBookingsByUser(userId, State.valueOfEnum(state));
-        log.info("Getting booking by user " + userId);
-        return result;
+        if (from < 0) {
+            throw new Exception("From < 0");
+        }
+        Pageable pageable = PageRequest.of((from / size), size, SORT);
+        List<BookingDto> bookingDtoList = bookingService
+                .getBookingsByUser(userId, State.valueOfEnum(state), pageable);
+        log.info("Got booking by user " + userId);
+        return bookingDtoList;
     }
 }
