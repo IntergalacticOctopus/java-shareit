@@ -1,4 +1,4 @@
-package ru.practicum.shareit.bookingTest;
+package ru.practicum.shareit.bookingTests;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

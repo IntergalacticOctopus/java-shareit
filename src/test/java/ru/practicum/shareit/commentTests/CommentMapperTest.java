@@ -1,4 +1,4 @@
-package ru.practicum.shareit.commentTest;
+package ru.practicum.shareit.commentTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

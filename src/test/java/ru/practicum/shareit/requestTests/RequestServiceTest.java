@@ -1,4 +1,4 @@
-package ru.practicum.shareit.requestTest;
+package ru.practicum.shareit.requestTests;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;

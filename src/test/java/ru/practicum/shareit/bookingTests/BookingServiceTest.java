@@ -1,4 +1,4 @@
-package ru.practicum.shareit.bookingTest;
+package ru.practicum.shareit.bookingTests;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
