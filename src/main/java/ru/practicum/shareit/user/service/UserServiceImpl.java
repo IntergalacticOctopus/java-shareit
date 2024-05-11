@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
-        UserDto user = userMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found")));
+        UserDto user = userMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new NotFoundException("User does not exist")));
         return user;
     }
 
