@@ -67,17 +67,8 @@ public class RequestController {
                                    @RequestParam(defaultValue = "0") Integer from,
                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("Getting all by user " + userId);
-
-        int pageNumber = from;
-        if (from == null) {
-            pageNumber = 0;
-        }
-        int sizeOfPage = size;
-        if (size == null) {
-            sizeOfPage = 200;
-        }
         Sort sort = Sort.by(DESC, "created");
-        Pageable pageable = PageRequest.of(pageNumber, sizeOfPage, sort);
+        Pageable pageable = PageRequest.of(from, size, sort);
         List<RequestDto> result = requestService.getAllRequests(userId, pageable);
         log.info("Got all by user " + userId);
         return result;
