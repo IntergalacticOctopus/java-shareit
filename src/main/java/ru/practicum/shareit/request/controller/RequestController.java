@@ -63,7 +63,7 @@ public class RequestController {
     }
 
     @GetMapping("/all")
-    public List<RequestDto> getAll(@RequestHeader(REQUEST_HEADER) Long userId,
+    public List<RequestDto> getAll(@RequestHeader(REQUEST_HEADER) long userId,
                                    @RequestParam(defaultValue = "0") Integer from,
                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("Getting all by user " + userId);
