@@ -16,6 +16,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                       @Param("available") Boolean available);
 
     List<Item> findItemByOwnerId(Long id);
+
     List<Item> findItemByOwnerId(Long id, Pageable pageable);
 
     List<Item> getItemsByRequestId(Long requestId, Sort sort);
