@@ -20,6 +20,7 @@ public class CommentDto {
 
     @Override
     public boolean equals(Object o) {
+        hashCode();
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CommentDto that = (CommentDto) o;
@@ -27,5 +28,7 @@ public class CommentDto {
     }
 
     @Override
-    public int hashCode() {return Objects.hash(id, text, authorName, created);}
+    public int hashCode() {
+        return Objects.hash(id, text, authorName, created);
+    }
 }

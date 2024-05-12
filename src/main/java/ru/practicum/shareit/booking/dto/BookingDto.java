@@ -28,6 +28,7 @@ public class BookingDto {
 
     @Override
     public boolean equals(Object o) {
+        hashCode();
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookingDto that = (BookingDto) o;

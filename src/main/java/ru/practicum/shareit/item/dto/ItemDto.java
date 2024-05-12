@@ -59,6 +59,7 @@ public class ItemDto {
 
         @Override
         public boolean equals(Object o) {
+            hashCode();
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             BookingDto that = (BookingDto) o;
@@ -66,6 +67,8 @@ public class ItemDto {
         }
 
         @Override
-        public int hashCode() {return Objects.hash(id, start, end, itemId, bookerId);}
+        public int hashCode() {
+            return Objects.hash(id, start, end, itemId, bookerId);
+        }
     }
 }

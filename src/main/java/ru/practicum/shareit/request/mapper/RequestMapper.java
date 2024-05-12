@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -49,13 +50,13 @@ public class RequestMapper {
     }
 
     private List<ItemDto> getItemsByRequestId(Long requestId) {
-        List<ItemDto> itemDtos = new ArrayList<>();
-        List<Item> items = itemRepository.getItemsByRequestId(requestId, Sort.by(DESC, "id"));
 
-        for (Item item : items) {
-            ItemDto itemDto = itemMapper.toItemDto(item);
-            itemDtos.add(itemDto);
+        List<Item> items = itemRepository.getItemsByRequestId(requestId, Sort.by(Sort.Direction.DESC, "id"));
+
+        if (items.isEmpty()) {
+            return new ArrayList<>();
         }
+        List<ItemDto> itemDtos = items.stream().map(itemMapper::toItemDto).collect(Collectors.toList());
 
         return itemDtos;
     }
