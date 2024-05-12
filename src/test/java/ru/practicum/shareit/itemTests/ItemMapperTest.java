@@ -15,8 +15,11 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.storage.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemMapperTest {
@@ -69,6 +72,33 @@ public class ItemMapperTest {
         assertEquals(item.getAvailable(), itemDto.getAvailable());
         assertNull(itemDto.getRequestId());
     }
+    @Test
+    public void testToItemWithRequest() {
+        itemCreateDto = new ItemCreateDto(1L, "Item Name", "Item Description", true, 1L, 1L);
+        when(requestRepository.findById(itemCreateDto.getRequestId())).thenReturn(java.util.Optional.of(new Request(1L, "Request Description", owner, LocalDateTime.now())));
 
+        Item result = itemMapper.toItem(itemCreateDto, owner);
+
+        assertEquals(itemCreateDto.getId(), result.getId());
+        assertEquals(itemCreateDto.getName(), result.getName());
+        assertEquals(itemCreateDto.getDescription(), result.getDescription());
+        assertEquals(itemCreateDto.getAvailable(), result.getAvailable());
+        assertEquals(owner, result.getOwner());
+        assertEquals(1L, result.getRequest().getId());
+    }
+    @Test
+    public void testToItemUpdateWithRequest() {
+        itemUpdateDto = new ItemUpdateDto(1L, "Updated Item Name", "Updated Item Description", true, 1L);
+        when(requestRepository.findById(itemUpdateDto.getRequestId())).thenReturn(java.util.Optional.of(new Request(1L, "Request Description", owner, LocalDateTime.now())));
+
+        Item result = itemMapper.toItem(itemUpdateDto, owner);
+
+        assertEquals(itemUpdateDto.getId(), result.getId());
+        assertEquals(itemUpdateDto.getName(), result.getName());
+        assertEquals(itemUpdateDto.getDescription(), result.getDescription());
+        assertEquals(itemUpdateDto.getAvailable(), result.getAvailable());
+        assertEquals(owner, result.getOwner());
+        assertEquals(1L, result.getRequest().getId());
+    }
 
 }
