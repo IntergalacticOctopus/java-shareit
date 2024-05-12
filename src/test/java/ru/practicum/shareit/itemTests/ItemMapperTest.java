@@ -72,6 +72,7 @@ public class ItemMapperTest {
         assertEquals(item.getAvailable(), itemDto.getAvailable());
         assertNull(itemDto.getRequestId());
     }
+
     @Test
     public void testToItemWithRequest() {
         itemCreateDto = new ItemCreateDto(1L, "Item Name", "Item Description", true, 1L, 1L);
@@ -86,6 +87,7 @@ public class ItemMapperTest {
         assertEquals(owner, result.getOwner());
         assertEquals(1L, result.getRequest().getId());
     }
+
     @Test
     public void testToItemUpdateWithRequest() {
         itemUpdateDto = new ItemUpdateDto(1L, "Updated Item Name", "Updated Item Description", true, 1L);
