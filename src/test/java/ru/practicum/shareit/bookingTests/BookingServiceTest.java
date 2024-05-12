@@ -242,6 +242,7 @@ public class BookingServiceTest {
 
         assertFalse(bookings.isEmpty());
     }
+
     @Test
     void getBookingsByOwnerWithUNKNOWNStateTest() {
         Booking booking1 = new Booking(
