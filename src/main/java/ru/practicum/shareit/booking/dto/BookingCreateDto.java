@@ -7,7 +7,6 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 
 @Getter
