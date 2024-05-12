@@ -303,6 +303,7 @@ public class BookingServiceTest {
 
         assertFalse(bookings.isEmpty());
     }
+
     @Test
     void getBookingsByUserWithREJECTEDStateTest() {
         Booking booking1 = new Booking(
