@@ -36,5 +36,7 @@ public class BookingDto {
     }
 
     @Override
-    public int hashCode() {return Objects.hash(id, start, end, item, booker, status);}
+    public int hashCode() {
+        return Objects.hash(id, start, end, item, booker, status);
+    }
 }
