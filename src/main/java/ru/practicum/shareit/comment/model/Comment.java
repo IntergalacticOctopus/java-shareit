@@ -45,4 +45,6 @@ public class Comment {
         return Objects.equals(id, comment.id) && Objects.equals(text, comment.text) && Objects.equals(item, comment.item) && Objects.equals(author, comment.author) && Objects.equals(created, comment.created);
     }
 
+    @Override
+    public int hashCode() {return Objects.hash(id, text, item, author, created);}
 }

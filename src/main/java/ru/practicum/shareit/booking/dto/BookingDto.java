@@ -33,4 +33,7 @@ public class BookingDto {
         BookingDto that = (BookingDto) o;
         return Objects.equals(id, that.id) && Objects.equals(start, that.start) && Objects.equals(end, that.end) && Objects.equals(item, that.item) && Objects.equals(booker, that.booker) && status == that.status;
     }
+
+    @Override
+    public int hashCode() {return Objects.hash(id, start, end, item, booker, status);}
 }
