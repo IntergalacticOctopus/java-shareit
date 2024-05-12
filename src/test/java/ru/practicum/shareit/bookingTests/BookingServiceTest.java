@@ -225,23 +225,19 @@ public class BookingServiceTest {
 
         assertFalse(bookings.isEmpty());
     }
-
-    @Test
-    void getBookingsByOwnerWithREJECTEDStateTest() {
-        Booking booking1 = new Booking(
-                1L, item1, user1, LocalDateTime.of(2020, 5, 5, 5, 5, 5),
-                LocalDateTime.of(2021, 5, 5, 5, 5, 5), Status.REJECTED);
-        when(bookingRepository.findAllByItemOwnerAndStatusEquals(any(), any(), any()))
-                .thenReturn(List.of(booking1));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
-
-        Pageable pageable = PageRequest.of(0, 20, Sort.by(DESC, "start"));
-
-        List<BookingDto> bookings = bookingService.getBookingsByOwner(user2.getId(),
-                State.REJECTED, pageable);
-
-        assertFalse(bookings.isEmpty());
-    }
+//    @Test
+//    void getBookingsByOwnerWithREJECTEDStateTest() {
+//        when(bookingRepository.findAllByItemOwnerAndStatusEquals(any(), any(), any()))
+//                .thenReturn(List.of(booking));
+//        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+//
+//        Pageable pageable = PageRequest.of(0, 20, Sort.by(DESC, "start"));
+//
+//        List<BookingDto> bookings = bookingService.getBookingsByOwner(user2.getId(),
+//                State.REJECTED, pageable);
+//
+//        assertFalse(bookings.isEmpty());
+//    }
 
     @Test
     void getBookingsByOwnerWithUNKNOWNStateTest() {
@@ -274,6 +270,20 @@ public class BookingServiceTest {
 
         List<BookingDto> bookings = bookingService.getBookingsByUser(user1.getId(),
                 State.ALL, any());
+
+        assertFalse(bookings.isEmpty());
+    }
+
+    @Test
+    void getBookingsByOwnerWithREJECTEDStateTest() {
+        when(bookingRepository.findAllByItemOwnerAndStatusEquals(any(), any(), any()))
+                .thenReturn(List.of(booking));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+
+        Pageable pageable = PageRequest.of(0, 20, Sort.by(DESC, "start"));
+
+        List<BookingDto> bookings = bookingService.getBookingsByOwner(user2.getId(),
+                State.REJECTED, pageable);
 
         assertFalse(bookings.isEmpty());
     }
@@ -339,7 +349,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void getBookingsByUserWithREJECTEDStatusTest() {
+    void getBookingsByUserWithUNKNOWNStatusTest() {
         Booking booking1 = new Booking(
                 1L,
                 item1, user1, LocalDateTime.of(2020, 5, 5, 5, 5, 5),

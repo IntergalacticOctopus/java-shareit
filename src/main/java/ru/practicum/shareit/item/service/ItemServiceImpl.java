@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -23,10 +24,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -64,9 +67,6 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Item does not exist"));
         User itemsUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User does not exist"));
-        if (!updatebleItem.getOwner().getId().equals(itemsUser.getId())) {
-            throw new NotFoundException("Invalid owner");
-        }
         updatebleItem.setAvailable(item.getAvailable() != null ? item.getAvailable() : updatebleItem.getAvailable());
         updatebleItem.setName(item.getName() != null ? item.getName() : updatebleItem.getName());
         updatebleItem.setDescription(item.getDescription() != null ? item.getDescription() : updatebleItem.getDescription());
