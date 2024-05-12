@@ -31,19 +31,21 @@ public class RequestMapper {
     private final ItemMapper itemMapper;
 
     public RequestDto toRequestDto(Request request) {
-        return new RequestDto(
+        RequestDto requestDto = new RequestDto(
                 request.getId(),
                 request.getDescription(),
                 request.getCreated(),
                 getItemsByRequestId(request.getId()));
+        return requestDto;
     }
 
     public Request toRequest(RequestCreateDto request) {
-        return new Request(
+        Request returnRequest = new Request(
                 null,
                 request.getDescription(),
                 userMapper.toUser(userService.getUserById(request.getRequesterId())),
                 request.getCreated());
+        return returnRequest;
     }
 
     private List<ItemDto> getItemsByRequestId(Long requestId) {

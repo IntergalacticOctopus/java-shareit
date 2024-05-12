@@ -16,9 +16,6 @@ public interface ItemMapper {
 
     public Item toItem(ItemCreateDto item, User owner);
 
-    public Item toItem(ItemDto item, User owner);
-
     public ItemDto toItemDto(Item item);
 
-    public List<ItemDto> toItemDtoList(List<Item> items);
 }

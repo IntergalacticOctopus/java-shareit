@@ -139,6 +139,28 @@ public class ItemServiceTest {
     }
 
     @Test
+    void getItemsByUserIdTest() {
+        User owner = new User(1L, "user1", "user1@gmail.com");
+        Item item1 = new Item(1L, "itemName1", "itemDes1", null, owner, null);
+        Item item2 = new Item(2L, "itemName2", "itemDes2", null, owner, null);
+        List<Item> items = Arrays.asList(item1, item2);
+
+        when(itemRepository.findItemByOwnerId(1L)).thenReturn(items);
+        when(itemMapper.toItemDto(item1)).thenReturn(itemDto);
+        when(itemMapper.toItemDto(item2)).thenReturn(itemDto);
+        when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
+
+        System.out.println(owner.getId());
+        List<ItemDto> result = itemService.getItemsByUserId(1L);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(itemDto));
+
+        verify(itemRepository, times(1)).findItemByOwnerId(1L);
+        verify(itemMapper, times(2)).toItemDto(any(Item.class));
+    }
+
+    @Test
     void deleteByIdTest() {
         doNothing().when(itemRepository).deleteById(1L);
 

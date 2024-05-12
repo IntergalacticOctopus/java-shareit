@@ -90,6 +90,26 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$.available", is(item.getAvailable())));
     }
 
+    @SneakyThrows
+    @Test
+    void searchItemTest() {
+        when(itemService.search(any()))
+                .thenReturn(List.of(item));
+
+        mvc.perform(get("/items/search?text=description")
+                        .content(objectMapper.writeValueAsString(item))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.[0].id", is(item.getId()), Long.class))
+                .andExpect(jsonPath("$.[0].name", is(item.getName())))
+                .andExpect(jsonPath("$.[0].description", is(item.getDescription())))
+                .andExpect(jsonPath("$.[0].available", is(item.getAvailable())));
+    }
+
     @Test
     @SneakyThrows
     void getItemByIdTest() {

@@ -12,7 +12,6 @@ import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -70,7 +69,7 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getBookingsByUser(@RequestHeader(REQUEST_HEADER) long userId,
                                               @RequestParam(defaultValue = "ALL") String state,
-                                              @RequestParam(defaultValue = "0") @Min(0) int from,
+                                              @RequestParam(defaultValue = "0") int from,
                                               @RequestParam(defaultValue = "10") int size) throws Exception {
         log.info("Getting booking by user " + userId);
         if (from < 0) {

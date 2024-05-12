@@ -25,9 +25,4 @@ public class CommentDto {
         CommentDto that = (CommentDto) o;
         return Objects.equals(id, that.id) && Objects.equals(text, that.text) && Objects.equals(authorName, that.authorName) && Objects.equals(created, that.created);
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, text, authorName, created);
-    }
 }

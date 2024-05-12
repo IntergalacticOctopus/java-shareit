@@ -177,6 +177,23 @@ public class BookingServiceTest {
     }
 
     @Test
+    void getBookingsByOwnerWithAllStateTest() {
+        Booking booking1 = new Booking(
+                1L,
+                item1, user1, LocalDateTime.of(2020, 5, 5, 5, 5, 5),
+                LocalDateTime.of(2021, 5, 5, 5, 5, 5), Status.APPROVED);
+        when(bookingRepository.findAllByItemOwnerAndEndBefore(any(), any(), any()))
+                .thenReturn(List.of(booking1));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+
+        Pageable pageable = PageRequest.of(0, 20, Sort.by(DESC, "start"));
+        List<BookingDto> bookings = bookingService.getBookingsByOwner(user2.getId(),
+                State.ALL, pageable);
+
+        assertTrue(bookings.isEmpty());
+    }
+
+    @Test
     void getBookingsByOwnerWithFUTUREStateTest() {
         Booking booking1 = new Booking(
                 1L,
