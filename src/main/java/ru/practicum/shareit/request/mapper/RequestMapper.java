@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -48,14 +49,10 @@ public class RequestMapper {
     }
 
     private List<ItemDto> getItemsByRequestId(Long requestId) {
-
-        List<Item> items = itemRepository.getItemsByRequestId(requestId, Sort.by(Sort.Direction.DESC, "id"));
-
-        if (items.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<ItemDto> itemDtos = items.stream().map(itemMapper::toItemDto).collect(Collectors.toList());
-
-        return itemDtos;
+        return Optional.ofNullable(itemRepository.getItemsByRequestId(requestId, Sort.by(Sort.Direction.DESC, "id")))
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }
