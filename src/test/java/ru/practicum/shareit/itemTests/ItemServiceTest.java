@@ -13,6 +13,7 @@ import ru.practicum.shareit.ShareItApp;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.comment.Storage.CommentRepository;
 import ru.practicum.shareit.comment.dto.CommentCreateDto;
 import ru.practicum.shareit.comment.dto.CommentDto;
@@ -30,11 +31,8 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
-import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -180,6 +178,16 @@ public class ItemServiceTest {
         assertEquals(itemDto, result.get(0));
         verify(itemRepository, times(1)).search("name", "name", true);
         verify(itemMapper, times(1)).toItemDto(item);
+    }
+
+    @Test
+    void searchBlankTest() {
+        when(itemRepository.search("name", "name", true)).thenReturn(Collections.singletonList(item));
+        when(itemMapper.toItemDto(item)).thenReturn(itemDto);
+
+        List<ItemDto> result = itemService.search("");
+
+        assertEquals(0, result.size());
     }
 
     @Test
