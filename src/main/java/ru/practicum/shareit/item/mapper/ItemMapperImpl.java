@@ -18,20 +18,20 @@ public class ItemMapperImpl implements ItemMapper {
     @Override
     public Item toItem(ItemUpdateDto item, User owner) {
         Long requestId = item.getRequestId();
-        Request request = requestId!= null? requestRepository.findById(requestId).orElse(null) : null;
+        Request request = requestId != null ? requestRepository.findById(requestId).orElse(null) : null;
         return new Item(item.getId(), item.getName(), item.getDescription(), item.getAvailable(), owner, request);
     }
 
     @Override
     public Item toItem(ItemCreateDto item, User owner) {
         Long requestId = item.getRequestId();
-        Request request = requestId!= null? requestRepository.findById(requestId).orElse(null) : null;
+        Request request = requestId != null ? requestRepository.findById(requestId).orElse(null) : null;
         return new Item(item.getId(), item.getName(), item.getDescription(), item.getAvailable(), owner, request);
     }
 
     @Override
     public ItemDto toItemDto(Item item) {
-        Long requestId = item.getRequest()!= null? item.getRequest().getId() : null;
+        Long requestId = item.getRequest() != null ? item.getRequest().getId() : null;
         return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(), requestId);
     }
 }
