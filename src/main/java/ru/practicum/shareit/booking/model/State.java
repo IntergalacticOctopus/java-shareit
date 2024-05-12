@@ -6,7 +6,8 @@ public enum State {
     PAST,
     FUTURE,
     WAITING,
-    REJECTED;
+    REJECTED,
+    UNKNOWN;
 
     public static State valueOfEnum(String state) {
         for (State s : State.values()) {

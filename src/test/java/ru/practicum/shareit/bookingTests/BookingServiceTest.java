@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.ShareItApp;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
@@ -16,8 +18,8 @@ import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.model.State;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.AvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -33,8 +35,8 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Transactional
@@ -240,6 +242,22 @@ public class BookingServiceTest {
 
         assertFalse(bookings.isEmpty());
     }
+    @Test
+    void getBookingsByOwnerWithUNKNOWNStateTest() {
+        Booking booking1 = new Booking(
+                1L, item1, user1, LocalDateTime.of(2020, 5, 5, 5, 5, 5),
+                LocalDateTime.of(2021, 5, 5, 5, 5, 5), Status.UNKNOWN);
+        when(bookingRepository.findAllByItemOwnerAndStatusEquals(any(), any(), any()))
+                .thenReturn(List.of(booking1));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+
+        Pageable pageable = PageRequest.of(0, 20, Sort.by(DESC, "start"));
+
+        List<BookingDto> bookings = bookingService.getBookingsByOwner(user2.getId(),
+                State.UNKNOWN, pageable);
+
+        assertTrue(bookings.isEmpty());
+    }
 
     @Test
     void getBookingsByIncorrectUserIdTest() {
@@ -320,19 +338,19 @@ public class BookingServiceTest {
     }
 
     @Test
-    void getBookingsByUserWithREJECTEDStateTest() {
+    void getBookingsByUserWithREJECTEDStatusTest() {
         Booking booking1 = new Booking(
                 1L,
                 item1, user1, LocalDateTime.of(2020, 5, 5, 5, 5, 5),
-                LocalDateTime.of(2021, 5, 5, 5, 5, 5), Status.REJECTED);
+                LocalDateTime.of(2021, 5, 5, 5, 5, 5), Status.UNKNOWN);
         when(bookingRepository.findAllByBookerAndStatusEquals(any(), any(), any()))
                 .thenReturn(List.of(booking1));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1));
 
         List<BookingDto> bookings = bookingService.getBookingsByUser(user1.getId(),
-                State.REJECTED, any());
+                State.UNKNOWN, any());
 
-        assertFalse(bookings.isEmpty());
+        assertTrue(bookings.isEmpty());
     }
 
     @Test
