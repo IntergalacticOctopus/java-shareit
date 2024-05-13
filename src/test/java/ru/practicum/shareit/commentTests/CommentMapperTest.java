@@ -42,7 +42,10 @@ public class CommentMapperTest {
     @Test
     void toCommentTest() {
         Comment actualComment = commentMapper.toComment(commentCreateDto);
-        assertEquals(comment, actualComment);
+        assertEquals(comment.getId(), actualComment.getId());
+        assertEquals(comment.getText(), actualComment.getText());
+        assertEquals(comment.getAuthor(), actualComment.getAuthor());
+        assertEquals(comment.getCreated(), actualComment.getCreated());
     }
 
     @Test
