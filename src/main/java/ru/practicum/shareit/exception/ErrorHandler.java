@@ -21,15 +21,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleObjectAlreadyExistsException(final ObjectAlreadyExistsException exception) {
-        log.error("Server error ", exception);
-        String stacktrace = ExceptionUtils.getStackTrace(exception);
-        String errorMessage = "InternalService error: " + exception.getMessage() + stacktrace;
-        return new ErrorResponse(errorMessage);
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInternalServiceException(final Exception exception) {
         log.error("Server error ", exception);

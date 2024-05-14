@@ -1,17 +1,17 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Valid
@@ -30,12 +30,8 @@ public class BookingCreateDto {
     @NotNull
     private Long itemId;
 
-    @AssertTrue
-    private boolean isTimeValid() throws ValidationException {
-        if (start == null || end == null) {
-            return false;
-        }
-        boolean returnSt = (!(start.equals(end) || end.isBefore(start)));
-        return returnSt;
+    @AssertTrue(message = "Time validation error")
+    private boolean isTimeValid() {
+        return !(start.equals(end) || end.isBefore(start) || start == null || end == null);
     }
 }

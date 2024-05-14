@@ -1,9 +1,11 @@
 package ru.practicum.shareit.item.storage;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -14,4 +16,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                       @Param("available") Boolean available);
 
     List<Item> findItemByOwnerId(Long id);
+
+    List<Item> findItemByOwnerId(Long id, Pageable pageable);
+
+    List<Item> getItemsByRequestId(Long requestId, Sort sort);
 }
