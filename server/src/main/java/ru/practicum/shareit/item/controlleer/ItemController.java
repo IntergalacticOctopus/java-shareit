@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.controlleer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentCreateDto;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -11,7 +12,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,7 +27,7 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto addItem(@RequestHeader(REQUEST_HEADER) long userId, @Valid @RequestBody ItemCreateDto item) {
+    public ItemDto addItem(@RequestHeader(REQUEST_HEADER) long userId, @RequestBody ItemCreateDto item) {
         log.info("Adding item by user" + userId);
         ItemDto addedItemDto = itemService.create(userId, item);
         log.info("Item added by user" + userId);
@@ -82,7 +82,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@RequestHeader(REQUEST_HEADER) long userId,
-                                 @Valid @RequestBody CommentCreateDto comment,
+                                 @RequestBody CommentCreateDto comment,
                                  @PathVariable long itemId) {
         log.info("Adding comment by user " + userId);
         CommentDto commentDto = itemService.addComment(itemId, userId, comment);

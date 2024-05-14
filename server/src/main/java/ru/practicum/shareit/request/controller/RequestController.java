@@ -5,13 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.RequestCreateDto;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.service.RequestService;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class RequestController {
 
     @PostMapping
     public RequestDto create(@RequestHeader(REQUEST_HEADER) Long userId,
-                             @Valid @RequestBody RequestCreateDto request) {
+                             @RequestBody RequestCreateDto request) {
         request.setRequesterId(userId);
         request.setCreated(LocalDateTime.now());
 

@@ -7,6 +7,8 @@ import lombok.Setter;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
