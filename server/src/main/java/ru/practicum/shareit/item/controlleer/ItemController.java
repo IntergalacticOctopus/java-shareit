@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.controlleer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentCreateDto;
@@ -65,10 +67,13 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getUsersItems(@RequestHeader(REQUEST_HEADER) long userId) {
-        log.info("Getting items by user " + userId);
-        List<ItemDto> itemDtos = itemService.getItemsByUserId(userId);
-        log.info("Getting items " + itemDtos);
+    public List<ItemDto> getItemsByUserId(@RequestHeader(REQUEST_HEADER) long userId,
+                                          @RequestParam(defaultValue = "0") int from,
+                                          @RequestParam(defaultValue = "10") int size) {
+        log.info("Getting items for user with id: {}", userId);
+        Pageable pageable = PageRequest.of(from, size);
+        List<ItemDto> itemDtos = itemService.getItemsByUserId(userId, pageable);
+        log.info("Found {} items for user with id: {}", itemDtos.size(), userId);
         return itemDtos;
     }
 

@@ -61,9 +61,9 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getUsersItems(@RequestHeader(REQUEST_HEADER) long userId,
-                                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                @RequestParam(defaultValue = "10") @Positive int size) {
+    public ResponseEntity<Object> getItemsByUserId(@RequestHeader(REQUEST_HEADER) long userId,
+                                                   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                   @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Getting items by user " + userId);
         ResponseEntity<Object> items = itemClient.getItemsByUserId(userId, from, size);
         log.info("Getting items " + items);
@@ -92,7 +92,7 @@ public class ItemController {
     }
 
     @DeleteMapping("{itemId}")
-    public ResponseEntity<Object> removeById(@PathVariable long itemId) {
+    public ResponseEntity<Object> delete(@PathVariable long itemId) {
         log.info("Deleting item " + itemId);
         ResponseEntity<Object> item = itemClient.delete(itemId);
         log.info("Deleted item " + itemId);

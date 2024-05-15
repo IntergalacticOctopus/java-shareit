@@ -1,10 +1,11 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.request.client.RequestClient;
 import ru.practicum.shareit.request.dto.RequestCreateDto;
 
 import javax.validation.Valid;
@@ -27,6 +28,15 @@ public class RequestController {
         this.requestClient = requestClient;
     }
 
+    @PostMapping
+    public ResponseEntity<Object> create(@RequestHeader(USER_ID_HEADER) long userId,
+                                         @Valid @RequestBody RequestCreateDto request) {
+        log.info("Creating request by user " + userId);
+        ResponseEntity<Object> createdRequest = requestClient.create(request, userId);
+        log.info("Created request by user " + userId);
+        return createdRequest;
+    }
+
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getById(@RequestHeader(USER_ID_HEADER) long userId,
                                           @PathVariable long requestId) {
@@ -36,14 +46,6 @@ public class RequestController {
         return gotResult;
     }
 
-    @PostMapping
-    public ResponseEntity<Object> create(@RequestHeader(USER_ID_HEADER) long userId,
-                                         @Valid @RequestBody RequestCreateDto request) {
-        log.info("Creating request by user " + userId);
-        ResponseEntity<Object> createdRequest = requestClient.create(request, userId);
-        log.info("Created request by user " + userId);
-        return createdRequest;
-    }
 
     @GetMapping
     public ResponseEntity<Object> getByOwner(@RequestHeader(USER_ID_HEADER) long userId) {

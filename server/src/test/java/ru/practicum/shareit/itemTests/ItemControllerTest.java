@@ -133,7 +133,7 @@ public class ItemControllerTest {
     @Test
     @SneakyThrows
     void getItemsByUserIdTest() {
-        when(itemService.getItemsByUserId(any(Long.class)))
+        when(itemService.getItemsByUserId(any(Long.class), any()))
                 .thenReturn(List.of(item));
 
         mvc.perform(get(ITEM_URL)

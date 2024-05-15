@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +26,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -109,13 +106,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @ReadOnlyProperty
-    @Transactional(readOnly = true)
-    public List<ItemDto> getItemsByUserId(long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User " + id + " not found"));
+    public List<ItemDto> getItemsByUserId(long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
 
-        List<Item> items = itemRepository.findItemByOwnerId(id);
+        List<Item> items = itemRepository.findItemByOwnerId(userId, pageable);
         List<Booking> bookings = bookingRepository.findAllByItemInAndStatus(items, Status.APPROVED);
         Map<Long, List<Booking>> bookingsByItemId = bookings.stream()
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
@@ -124,30 +119,40 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, List<CommentDto>> commentsByItemId = allComments.stream()
                 .collect(Collectors.groupingBy(comment -> comment.getItem().getId()))
                 .entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().map(commentMapper::toCommentDto).collect(Collectors.toList())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(commentMapper::toCommentDto)
+                                .collect(Collectors.toList())
                 ));
 
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : items) {
             List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), Collections.emptyList());
+
             Booking lastBooking = itemBookings.stream()
-                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()) || (booking.getStart().equals(LocalDateTime.now()) || booking.getEnd().isAfter(LocalDateTime.now())))
+                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()) ||
+                            (booking.getStart().equals(LocalDateTime.now())
+                                    || booking.getEnd().isAfter(LocalDateTime.now())))
                     .findFirst()
                     .orElse(null);
+
             Booking nextBooking = itemBookings.stream()
                     .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                     .reduce((first, second) -> second)
                     .orElse(null);
+
             ItemDto itemDto = itemMapper.toItemDto(item);
-            if (bookingMapper != null && lastBooking != null) {
+            if (lastBooking!= null) {
                 itemDto.setLastBooking(bookingMapper.toBookingForItemDto(lastBooking));
             }
-            if (nextBooking != null) {
+            if (nextBooking!= null) {
                 itemDto.setNextBooking(bookingMapper.toBookingForItemDto(nextBooking));
             }
             itemDto.setComments(commentsByItemId.getOrDefault(item.getId(), Collections.emptyList()));
             itemDtoList.add(itemDto);
         }
+        itemDtoList = itemDtoList.stream().sorted(Comparator.comparing(ItemDto::getId)).collect(Collectors.toList());
         return itemDtoList;
     }
 

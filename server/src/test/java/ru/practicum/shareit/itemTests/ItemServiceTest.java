@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.ShareItServer;
 import ru.practicum.shareit.booking.Storage.BookingRepository;
@@ -149,7 +151,8 @@ public class ItemServiceTest {
         when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
 
         System.out.println(owner.getId());
-        List<ItemDto> result = itemService.getItemsByUserId(1L);
+        Pageable pageable = PageRequest.of(0, 20);
+        List<ItemDto> result = itemService.getItemsByUserId(1L, pageable);
 
         assertEquals(2, result.size());
         assertTrue(result.contains(itemDto));
