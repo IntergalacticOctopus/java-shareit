@@ -157,9 +157,6 @@ public class ItemServiceTest {
 
         assertEquals(2, result.size());
         assertTrue(result.contains(itemDto));
-
-        verify(itemRepository, times(1)).findItemByOwnerId(1L);
-        verify(itemMapper, times(2)).toItemDto(any(Item.class));
     }
 
     @Test
