@@ -145,7 +145,8 @@ public class ItemServiceTest {
         Item item2 = new Item(2L, "itemName2", "itemDes2", null, owner, null);
         List<Item> items = Arrays.asList(item1, item2);
 
-        when(itemRepository.findItemByOwnerId(1L)).thenReturn(items);
+
+        when(itemRepository.findItemByOwnerId(1L, any())).thenReturn(items);
         when(itemMapper.toItemDto(item1)).thenReturn(itemDto);
         when(itemMapper.toItemDto(item2)).thenReturn(itemDto);
         when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
