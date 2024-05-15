@@ -157,6 +157,7 @@ public class ItemServiceTest {
 
         assertEquals(2, result.size());
         assertTrue(result.contains(itemDto));
+
     }
 
     @Test
