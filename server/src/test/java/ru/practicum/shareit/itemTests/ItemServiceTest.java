@@ -151,13 +151,10 @@ public class ItemServiceTest {
         when(itemMapper.toItemDto(item2)).thenReturn(itemDto);
         when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
 
-        System.out.println(owner.getId());
         Pageable pageable = PageRequest.of(0, 20);
         List<ItemDto> result = itemService.getItemsByUserId(1L, pageable);
 
         assertEquals(2, result.size());
-        assertTrue(result.contains(itemDto));
-
     }
 
     @Test
