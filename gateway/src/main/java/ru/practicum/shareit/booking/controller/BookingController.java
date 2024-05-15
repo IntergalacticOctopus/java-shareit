@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
-import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.booking.dto.ItemBookingCreateDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -27,7 +27,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader(REQUEST_HEADER) long userId,
-                                         @RequestBody @Valid BookItemRequestDto requestDto) {
+                                         @RequestBody @Valid ItemBookingCreateDto requestDto) {
         log.info("Creating booking by user " + userId);
         ResponseEntity<Object> resultSt = bookingClient.create(userId, requestDto);
         log.info("Booking created by user" + userId);
@@ -67,9 +67,9 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getBookingsByUser(@RequestHeader(REQUEST_HEADER) long userId,
-                                                    @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                                    @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
-                                                    @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
+                                                    @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
+                                                    @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                                    @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         BookingState bookingState = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
 

@@ -13,6 +13,8 @@ import ru.practicum.shareit.booking.service.BookingService;
 
 import java.util.List;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 @RestController
 @RequestMapping(path = "/bookings")
 @Slf4j
@@ -20,7 +22,7 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
     private static final String REQUEST_HEADER = "X-Sharer-User-Id";
-    private static final Sort SORT = Sort.by(Sort.Direction.DESC, "start");
+    private static final Sort SORT = Sort.by(DESC, "start");
 
     @PostMapping
     public BookingDto create(@RequestHeader(REQUEST_HEADER) long userId,
