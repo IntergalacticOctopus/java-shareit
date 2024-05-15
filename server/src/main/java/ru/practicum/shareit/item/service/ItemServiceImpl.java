@@ -143,10 +143,10 @@ public class ItemServiceImpl implements ItemService {
                     .orElse(null);
 
             ItemDto itemDto = itemMapper.toItemDto(item);
-            if (lastBooking!= null) {
+            if (lastBooking != null) {
                 itemDto.setLastBooking(bookingMapper.toBookingForItemDto(lastBooking));
             }
-            if (nextBooking!= null) {
+            if (nextBooking != null) {
                 itemDto.setNextBooking(bookingMapper.toBookingForItemDto(nextBooking));
             }
             itemDto.setComments(commentsByItemId.getOrDefault(item.getId(), Collections.emptyList()));
