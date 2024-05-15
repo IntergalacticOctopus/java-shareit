@@ -145,13 +145,12 @@ public class ItemServiceTest {
         Item item2 = new Item(2L, "itemName2", "itemDes2", null, owner, null);
         List<Item> items = Arrays.asList(item1, item2);
 
-
-        when(itemRepository.findItemByOwnerId(1L, any())).thenReturn(items);
+        Pageable pageable = PageRequest.of(0, 20);
+        when(itemRepository.findItemByOwnerId(1L, pageable)).thenReturn(items);
         when(itemMapper.toItemDto(item1)).thenReturn(itemDto);
         when(itemMapper.toItemDto(item2)).thenReturn(itemDto);
         when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
 
-        Pageable pageable = PageRequest.of(0, 20);
         List<ItemDto> result = itemService.getItemsByUserId(1L, pageable);
 
         assertEquals(2, result.size());
