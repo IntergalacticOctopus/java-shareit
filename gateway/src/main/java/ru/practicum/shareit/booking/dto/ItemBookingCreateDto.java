@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.ValidationException;
 import javax.validation.constraints.AssertTrue;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Validated
 public class ItemBookingCreateDto {
 
     private long itemId;
@@ -30,7 +28,7 @@ public class ItemBookingCreateDto {
         if (start == null || end == null) {
             return false;
         }
-        boolean returnSt = (!(start.equals(end) || end.isBefore(start)));
+        boolean returnSt = end.isAfter(start);
         return returnSt;
     }
 }
